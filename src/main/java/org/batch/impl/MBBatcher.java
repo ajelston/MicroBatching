@@ -12,18 +12,24 @@ public class MBBatcher<T> implements MicroBatcher<T> {
     private final BatchProcessor<T> processor;
     private final List<MBPendingJob<T>> pending;
     private final ScheduledExecutorService scheduler;
+
     private ScheduledFuture<?> timeoutFuture;
+    private boolean isShutdown;
 
     public MBBatcher(MicroBatcherOptions options, BatchProcessor<T> processor) {
         this.options = options;
         this.processor = processor;
         this.pending = new ArrayList<>();
+        this.isShutdown = false;
         this.scheduler = Executors.newScheduledThreadPool(1);
         scheduleBackgroundTasks();
     }
 
     @Override
     public CompletableFuture<JobResult<T>> submit(Job<T> job) {
+        if (isShutdown) {
+            throw new IllegalCallerException("MicroBatcher already shutdown!");
+        }
         var pendingJob = new MBPendingJob<>(job);
         pending.add(pendingJob);
         processPendingJobs(false);
@@ -47,7 +53,9 @@ public class MBBatcher<T> implements MicroBatcher<T> {
 
     @Override
     public void shutdown() {
-
+        isShutdown = true;
+        processPendingJobs(true);
+        timeoutFuture.cancel(false);
     }
 
     private void scheduleBackgroundTasks() {
