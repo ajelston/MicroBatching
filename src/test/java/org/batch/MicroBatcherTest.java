@@ -1,8 +1,8 @@
 package org.batch;
 
-import org.batch.impl.MBBatcherOptions;
-import org.batch.impl.MBJob;
-import org.batch.impl.MBBatcher;
+import org.batch.mb.MBBatcherOptions;
+import org.batch.mb.MBJob;
+import org.batch.mb.MBBatcher;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

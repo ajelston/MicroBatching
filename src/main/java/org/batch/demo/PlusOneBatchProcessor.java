@@ -3,7 +3,7 @@ package org.batch.demo;
 import org.batch.BatchProcessor;
 import org.batch.Job;
 import org.batch.JobResult;
-import org.batch.impl.MBJobResult;
+import org.batch.mb.MBJobResult;
 
 import java.util.List;
 import java.util.stream.Collectors;

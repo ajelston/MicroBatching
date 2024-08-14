@@ -1,6 +1,6 @@
 package org.batch;
 
-import org.batch.impl.MBJobResult;
+import org.batch.mb.MBJobResult;
 
 import java.util.List;
 import java.util.stream.Collectors;

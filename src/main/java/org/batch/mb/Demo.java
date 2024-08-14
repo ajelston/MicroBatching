@@ -1,9 +1,8 @@
-package org.batch;
+package org.batch.mb;
 
+import org.batch.BatchProcessor;
+import org.batch.MicroBatcher;
 import org.batch.demo.PlusOneBatchProcessor;
-import org.batch.impl.MBBatcher;
-import org.batch.impl.MBBatcherOptions;
-import org.batch.impl.MBJob;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -11,8 +10,8 @@ import java.util.concurrent.*;
 import java.util.logging.Logger;
 import java.util.stream.IntStream;
 
-public class Main {
-    private static final Logger LOGGER = Logger.getLogger(Main.class.getName());
+public class Demo {
+    private static final Logger LOGGER = Logger.getLogger(Demo.class.getName());
 
     public static void main(String[] args) {
         LOGGER.info("MicroBatcher demo starting.");
@@ -21,7 +20,7 @@ public class Main {
         int numJobsPerThread = 1_000_000;
 
         // TODO: arguments for options/defaults, num threads
-        // TODO: Refactor - create Callable/Runnable objects 
+        // TODO: Refactor - create Callable/Runnable objects
         MBBatcherOptions options = new MBBatcherOptions.Builder()
                 .withBatchSize(5)
                 .withTimeout(Duration.ofMillis(100))

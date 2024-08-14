@@ -1,4 +1,4 @@
-package org.batch.impl;
+package org.batch.mb;
 
 import org.batch.*;
 
