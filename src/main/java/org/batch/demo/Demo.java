@@ -1,8 +1,10 @@
-package org.batch.mb;
+package org.batch.demo;
 
 import org.batch.BatchProcessor;
 import org.batch.MicroBatcher;
-import org.batch.demo.PlusOneBatchProcessor;
+import org.batch.mb.MBBatcher;
+import org.batch.mb.MBBatcherOptions;
+import org.batch.mb.MBJob;
 
 import java.time.Duration;
 import java.time.Instant;
