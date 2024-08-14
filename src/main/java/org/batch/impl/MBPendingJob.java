@@ -5,20 +5,20 @@ import org.batch.JobResult;
 
 import java.util.concurrent.CompletableFuture;
 
-public class MBPendingJob<T> {
-    private final Job<T> job;
-    private final CompletableFuture<JobResult<T>> jobResult;
+public class MBPendingJob<TInput, TOutput> {
+    private final Job<TInput> job;
+    private final CompletableFuture<JobResult<TOutput>> jobResult;
 
-    public MBPendingJob(Job<T> job) {
+    public MBPendingJob(Job<TInput> job) {
         this.job = job;
         this.jobResult = new CompletableFuture<>();
     }
 
-    public Job<T> getJob() {
+    public Job<TInput> getJob() {
         return job;
     }
 
-    public CompletableFuture<JobResult<T>> getJobResult() {
+    public CompletableFuture<JobResult<TOutput>> getJobResult() {
         return jobResult;
     }
 }

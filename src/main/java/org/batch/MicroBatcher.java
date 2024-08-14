@@ -2,13 +2,13 @@ package org.batch;
 
 import java.util.concurrent.CompletableFuture;
 
-public interface MicroBatcher<T> {
+public interface MicroBatcher<TInput, TOutput> {
     /**
      *
      * @param job
      * @return
      */
-    CompletableFuture<JobResult<T>> submit(Job<T> job);
+    CompletableFuture<JobResult<TOutput>> submit(Job<TInput> job);
 
     /**
      * Block until all previously submitted jobs have

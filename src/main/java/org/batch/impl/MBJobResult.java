@@ -3,6 +3,9 @@ package org.batch.impl;
 import org.batch.JobResult;
 
 public class MBJobResult<T> implements JobResult<T> {
+
+    private T result;
+
     @Override
     public boolean isSuccess() {
         return false;
@@ -15,6 +18,10 @@ public class MBJobResult<T> implements JobResult<T> {
 
     @Override
     public T getResult() {
-        return null;
+        return result;
+    }
+
+    public void setResult(T result) {
+        this.result = result;
     }
 }

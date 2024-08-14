@@ -16,8 +16,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class MicroBatcherTest {
 
-    // TODO: Tests for actual job results from processor
-    // TODO: exceptions thrown from BatchProcessor
+    // TODO: Errored jobs
+    // TODO: Exceptions thrown by BatchProcessor
     // TODO: Demo in Main - org.batch.demo package
     // TODO: Logging, Metrics?
     // TODO: Queue max capacity, time outs
@@ -25,13 +25,13 @@ public class MicroBatcherTest {
     private static final int BATCH_SIZE = 5;
     private static final int TIMEOUT_MS = 10;
 
-    private BatchProcessor<String> processor;
+    private BatchProcessor<String, String> processor;
     private MicroBatcherOptions options;
-    private MicroBatcher<String> batcher;
+    private MicroBatcher<String, String> batcher;
 
     @BeforeEach
     public void setUp() {
-        processor = new TestBatchProcessor<>();
+        processor = new UpperCaseBatchProcessor();
         options = new MBBatcherOptions.Builder()
                 .withBatchSize(BATCH_SIZE)
                 .withTimeout(Duration.ofMillis(TIMEOUT_MS))
@@ -72,6 +72,19 @@ public class MicroBatcherTest {
 
         assertEquals(BATCH_SIZE - 1, jobResults.size());
         jobResults.forEach((jobResultFuture) -> assertTrue(jobResultFuture.isDone()));
+    }
+
+    @Test
+    public void process_jobInputPassedToBatchProcessor_jobOutputInResult() throws Exception {
+        var job = new MBJob<String>();
+        job.setInput("hello");
+        var jobResult = batcher.submit(job);
+
+        // Force job submission
+        batcher.shutdown();
+
+        assertTrue(jobResult.isDone());
+        assertEquals("HELLO", jobResult.get().getResult());
     }
 
     @Test

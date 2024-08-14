@@ -2,7 +2,7 @@ package org.batch;
 
 import java.util.List;
 
-public interface BatchProcessor<T> {
+public interface BatchProcessor<TInput, TOutput> {
     /**
      * We have two types of JobResult here. One is presumably
      * returned straightaway (or in a blocking fashion) after
@@ -22,5 +22,5 @@ public interface BatchProcessor<T> {
      * @param jobs
      * @return
      */
-    List<JobResult<T>> process(List<Job<T>> jobs);
+    List<JobResult<TOutput>> process(List<Job<TInput>> jobs);
 }

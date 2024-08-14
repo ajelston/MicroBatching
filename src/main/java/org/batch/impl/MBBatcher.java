@@ -8,16 +8,16 @@ import java.util.List;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class MBBatcher<T> implements MicroBatcher<T> {
+public class MBBatcher<TInput, TOutput> implements MicroBatcher<TInput, TOutput> {
 
     private final MicroBatcherOptions options;
-    private final BatchProcessor<T> processor;
-    private final BlockingQueue<MBPendingJob<T>> pending;
+    private final BatchProcessor<TInput, TOutput> processor;
+    private final BlockingQueue<MBPendingJob<TInput, TOutput>> pending;
     private final ExecutorService executorService;
     private final Future<?> backgroundSubmitter;
     private final AtomicBoolean isShutdown;
 
-    public MBBatcher(MicroBatcherOptions options, BatchProcessor<T> processor) {
+    public MBBatcher(MicroBatcherOptions options, BatchProcessor<TInput, TOutput> processor) {
         this.options = options;
         this.processor = processor;
         this.pending = new LinkedBlockingQueue<>();
@@ -27,20 +27,20 @@ public class MBBatcher<T> implements MicroBatcher<T> {
     }
 
     @Override
-    public CompletableFuture<JobResult<T>> submit(Job<T> job) {
+    public CompletableFuture<JobResult<TOutput>> submit(Job<TInput> job) {
         if (isShutdown.get()) {
             throw new IllegalCallerException("Cannot submit jobs after shutdown!");
         }
 
-        var pendingJob = new MBPendingJob<>(job);
+        var pendingJob = new MBPendingJob<TInput, TOutput>(job);
         pending.add(pendingJob);
         return pendingJob.getJobResult();
     }
 
     private void processPendingJobs() {
         while (!isShutdown.get() || !pending.isEmpty()) {
-            List<MBPendingJob<T>> pendingJobs = getPendingJobs(options.batchSize());
-            List<Job<T>> jobs = pendingJobs.stream()
+            List<MBPendingJob<TInput, TOutput>> pendingJobs = getPendingJobs(options.batchSize());
+            List<Job<TInput>> jobs = pendingJobs.stream()
                     .map(MBPendingJob::getJob)
                     .toList();
             var results = processor.process(jobs);
@@ -50,8 +50,8 @@ public class MBBatcher<T> implements MicroBatcher<T> {
         }
     }
 
-    private List<MBPendingJob<T>> getPendingJobs(int batchSize) {
-        List<MBPendingJob<T>> pendingJobs = new ArrayList<>(batchSize);
+    private List<MBPendingJob<TInput, TOutput>> getPendingJobs(int batchSize) {
+        List<MBPendingJob<TInput, TOutput>> pendingJobs = new ArrayList<>(batchSize);
         for (int i = 0; i < batchSize; i++) {
             try {
                 var pendingJob = getPendingJob();
@@ -66,7 +66,7 @@ public class MBBatcher<T> implements MicroBatcher<T> {
         return pendingJobs;
     }
 
-    private MBPendingJob<T> getPendingJob() throws InterruptedException {
+    private MBPendingJob<TInput, TOutput> getPendingJob() throws InterruptedException {
         if (options.timeout().isEmpty()) {
             return pending.take();
         }
@@ -76,6 +76,10 @@ public class MBBatcher<T> implements MicroBatcher<T> {
 
     @Override
     public void shutdown() {
+        // Idempotence - check if batcher is already shutdown.
+        if (isShutdown.get()) {
+            return;
+        }
         isShutdown.set(true);
         try {
             // Wait for the background submitter to finish processing
