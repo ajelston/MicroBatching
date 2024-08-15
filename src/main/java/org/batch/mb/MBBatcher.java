@@ -48,9 +48,19 @@ public class MBBatcher<TInput, TOutput> implements MicroBatcher<TInput, TOutput>
             List<Job<TInput>> jobs = pendingJobs.stream()
                     .map(MBPendingJob::getJob)
                     .toList();
-            var results = processor.process(jobs);
-            for (int i = 0; i < results.size(); i++) {
-                pendingJobs.get(i).getJobResult().complete(results.get(i));
+            try {
+                var results = processor.process(jobs);
+                for (int i = 0; i < results.size(); i++) {
+                    pendingJobs.get(i).getJobResult().complete(results.get(i));
+                }
+            } catch (Exception e) {
+                // If BatchProcessor throws an exception, all jobs in the batch
+                // report an exceptional error.
+                pendingJobs.forEach(pendingJob -> {
+                    MBJobResult<TOutput> jobResult = new MBJobResult<>();
+                    jobResult.setException(e);
+                    pendingJob.getJobResult().complete(jobResult);
+                });
             }
         }
     }

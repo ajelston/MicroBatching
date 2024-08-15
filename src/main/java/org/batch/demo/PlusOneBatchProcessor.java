@@ -17,6 +17,7 @@ public class PlusOneBatchProcessor implements BatchProcessor<Integer, Integer> {
         return jobs.stream()
                 .map(job -> {
                     MBJobResult<Integer> result = new MBJobResult<>();
+                    result.setSuccess(true);
                     result.setResult(job.getInput() + 1);
                     return result;
                 }).collect(Collectors.toList());

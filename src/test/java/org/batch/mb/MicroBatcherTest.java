@@ -82,7 +82,46 @@ public class MicroBatcherTest {
         batcher.shutdown();
 
         assertTrue(jobResult.isDone());
-        assertEquals("HELLO", jobResult.get().getResult());
+        JobResult<String> stringJobResult = jobResult.get();
+        assertTrue(stringJobResult.isSuccess());
+        assertEquals("HELLO", stringJobResult.getResult());
+        assertNull(stringJobResult.getErrorMessage());
+        assertFalse(stringJobResult.getException().isPresent());
+    }
+
+    @Test
+    public void process_jobResultError_errorDetailsInResult() throws Exception {
+        var job = new MBJob<String>();
+        job.setInput("error");
+        var jobResult = batcher.submit(job);
+
+        // Force job submission
+        batcher.shutdown();
+
+        assertTrue(jobResult.isDone());
+        JobResult<String> stringJobResult = jobResult.get();
+        assertFalse(stringJobResult.isSuccess());
+        assertNull(stringJobResult.getResult());
+        assertEquals(UpperCaseBatchProcessor.ERROR_MESSAGE, stringJobResult.getErrorMessage());
+        assertFalse(stringJobResult.getException().isPresent());
+    }
+
+    @Test
+    public void process_batchProcessorException_errorDetailsInResult() throws Exception {
+        var job = new MBJob<String>();
+        job.setInput("exception");
+        var jobResult = batcher.submit(job);
+
+        // Force job submission
+        batcher.shutdown();
+
+        assertTrue(jobResult.isDone());
+        JobResult<String> stringJobResult = jobResult.get();
+        assertFalse(stringJobResult.isSuccess());
+        assertNull(stringJobResult.getResult());
+        assertEquals(UpperCaseBatchProcessor.EXCEPTION_MESSAGE, stringJobResult.getErrorMessage());
+        assertTrue(stringJobResult.getException().isPresent());
+        assertInstanceOf(IllegalArgumentException.class, stringJobResult.getException().get());
     }
 
     @Test
