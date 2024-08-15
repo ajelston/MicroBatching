@@ -1,8 +1,6 @@
-package org.batch;
+package org.batch.mb;
 
-import org.batch.mb.MBBatcherOptions;
-import org.batch.mb.MBJob;
-import org.batch.mb.MBBatcher;
+import org.batch.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,9 +16,9 @@ public class MicroBatcherTest {
 
     // TODO: Errored jobs
     // TODO: Exceptions thrown by BatchProcessor
-    // TODO: Demo in Main - org.batch.demo package
     // TODO: Logging, Metrics?
     // TODO: Queue max capacity, time outs
+    // TODO: Test with empty timeout
 
     private static final int BATCH_SIZE = 5;
     private static final int TIMEOUT_MS = 10;
@@ -64,11 +62,11 @@ public class MicroBatcherTest {
     }
 
     @Test
-    public void submit_timeoutReached_batchProcessorInvoked() {
+    public void submit_timeoutReached_batchProcessorInvoked() throws Exception {
         var jobs = makeJobs(BATCH_SIZE - 1);
         var jobResults = submitJobs(jobs);
 
-        sleep(TIMEOUT_MS + 10);
+        Thread.sleep(TIMEOUT_MS + 10);
 
         assertEquals(BATCH_SIZE - 1, jobResults.size());
         jobResults.forEach((jobResultFuture) -> assertTrue(jobResultFuture.isDone()));
@@ -111,14 +109,6 @@ public class MicroBatcherTest {
             jobs.add(job);
         }
         return jobs;
-    }
-
-    private static void sleep(int millis) {
-        try {
-            Thread.sleep(millis);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     private List<CompletableFuture<JobResult<String>>> submitJobs(List<Job<String>> jobs) {

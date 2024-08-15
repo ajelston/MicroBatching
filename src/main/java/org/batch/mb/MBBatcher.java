@@ -8,6 +8,11 @@ import java.util.List;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+/**
+ *
+ * @param <TInput>
+ * @param <TOutput>
+ */
 public class MBBatcher<TInput, TOutput> implements MicroBatcher<TInput, TOutput> {
 
     private final MicroBatcherOptions options;
@@ -86,9 +91,7 @@ public class MBBatcher<TInput, TOutput> implements MicroBatcher<TInput, TOutput>
             // all outstanding jobs.
             backgroundSubmitter.get();
         } catch (InterruptedException e) {
-            // Do nothing, thread has been interrupted but our
-            // only remaining task is issuing shutdown to the ExecutorService
-            // anyway.
+            Thread.currentThread().interrupt();
         } catch (ExecutionException e) {
             throw new RuntimeException(e);
         }

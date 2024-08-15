@@ -10,7 +10,7 @@ import java.util.logging.Logger;
  * average per-item time.
  *
  * Intended to be used in a try-with-resources block to
- * automatically report when the block is exited. 
+ * automatically report when the block is exited.
  */
 public class Timer implements AutoCloseable {
 

@@ -66,7 +66,10 @@ public class Demo {
         try {
             var threadNum = future.get();
             LOGGER.info(String.format("Thread %d completed", threadNum));
-        } catch (InterruptedException | ExecutionException e) {
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new RuntimeException(e);
+        } catch (ExecutionException e) {
             throw new RuntimeException(e);
         }
     }
