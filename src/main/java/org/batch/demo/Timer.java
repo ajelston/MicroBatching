@@ -32,9 +32,10 @@ public class Timer implements AutoCloseable {
         var elapsedStr = elapsed.toMillis() > 0
                 ? String.format("%d milliseconds", elapsed.toMillis())
                 : String.format("%d nanoseconds", elapsed.toNanos());
-        var message = String.format("%s: %s, %d items, %f nanoseconds/item (avg)",
+        var nanosPerItem = ((double) elapsed.toNanos()) / numHandled;
+        var message = String.format("%s: %s, %d items, %f nanoseconds/item (avg), %d items/s",
                 description, elapsedStr, numHandled,
-                ((double) elapsed.toNanos()) / numHandled);
+                nanosPerItem, Math.round(Duration.ofSeconds(1).toNanos() / nanosPerItem));
         LOGGER.info(message);
     }
 }
