@@ -65,6 +65,7 @@ public class MBBatcher<TInput, TOutput> implements MicroBatcher<TInput, TOutput>
                 }
                 pendingJobs.add(pendingJob);
             } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
                 break;
             }
         }
