@@ -2,25 +2,21 @@ package org.batch;
 
 import java.util.List;
 
+/**
+ * Process a list of jobs and return job results for each one.
+ *
+ * Clients of the library are required to provide an implementation
+ * of this interface according to their needs.
+ *
+ * @param <TInput> Type parameter for job input.
+ * @param <TOutput> Type parameter for job output.
+ */
 public interface BatchProcessor<TInput, TOutput> {
     /**
-     * We have two types of JobResult here. One is presumably
-     * returned straightaway (or in a blocking fashion) after
-     * we invoke BatchProcessor.
+     * Process a list of {@link Job}s and return a list of {@link JobResult}s.
      *
-     * The other is the type returned to the caller of the library,
-     * which represents delayed computation.
-     *
-     * The challenge is in resolving them with the same type. Might
-     * be able to get around this by returning CompletableFuture<JobResult>
-     * to the caller of the library, and having it wrap the BatchProcessor
-     * type.
-     *
-     * The problem with that is going to be distributed microbatcher using
-     * a persistence backend.
-     *
-     * @param jobs
-     * @return
+     * The output list of JobResults MUST match the input list of jobs in size
+     * and order.
      */
     List<JobResult<TOutput>> process(List<Job<TInput>> jobs);
 }

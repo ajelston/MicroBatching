@@ -4,6 +4,9 @@ import org.batch.MicroBatcherOptions;
 
 import java.time.Duration;
 
+/**
+ * Specify {@link MBBatcher} options with a fluent builder.
+ */
 public class MBBatcherOptions implements MicroBatcherOptions {
     private static final int DEFAULT_BATCH_SIZE = 5;
     private static final Duration DEFAULT_TIMEOUT = Duration.ofSeconds(10);

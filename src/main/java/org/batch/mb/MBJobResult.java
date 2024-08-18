@@ -4,6 +4,15 @@ import org.batch.JobResult;
 
 import java.util.Optional;
 
+/**
+ * {@link JobResult} implementation that allows specifying
+ * a result value, error status, and exception status.
+ *
+ * Setting an exception status will automatically set the
+ * error message as the exception message.
+ *
+ * @param <T> Type parameter for job output.
+ */
 public class MBJobResult<T> implements JobResult<T> {
 
     private boolean success;
@@ -34,6 +43,10 @@ public class MBJobResult<T> implements JobResult<T> {
         return result;
     }
 
+    public void setResult(T result) {
+        this.result = result;
+    }
+
     @Override
     public Optional<Exception> getException() {
         return Optional.ofNullable(exception);
@@ -44,10 +57,4 @@ public class MBJobResult<T> implements JobResult<T> {
         setErrorMessage(e.getMessage());
         this.exception = e;
     }
-
-    public void setResult(T result) {
-        this.result = result;
-    }
-
-
 }
