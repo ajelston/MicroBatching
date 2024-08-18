@@ -103,12 +103,7 @@ polling the queue can block waiting for available jobs. An alternative would hav
 been using ConcurrentLinkedQueue - that would have been a non-blocking operation 
 for inserting jobs to the queue, but the background processor would have either
 had to use a busy-loop to poll the queue, pegging a core at 100% CPU, or introduced
-sleeps with unnecessary delays. With the LinkedBlockingQueue implementation,
-performance tests on a Ryzen 7 7840HS show 10 threads can achieve approx 40-50 million
-job submissions per second per thread. Overall throughput is a little under 1 million
-jobs per second because the batch processing happens in a single thread - a future 
-extension would look at multi-threaded batch processing - but that would put some 
-requirements on the clients implementing BatchProcessor. 
+sleeps with unnecessary delays. 
 
 Once a job has been submitted, the caller needs to know when it has been processed
 and results are available. The JobResult returned by the BatchProcessor is wrapped
