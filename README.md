@@ -2,6 +2,15 @@
 
 ## Usage 
 
+build.gradle: 
+```groovy
+dependencies {
+    ...
+    implementation 'org.batch:micro-batch'
+    ...
+}
+```
+
 ```java
 MBBatcherOptions options = new MBBatcherOptions.Builder()
         .withBatchSize(5)
@@ -24,6 +33,23 @@ jobResultFuture.thenAccept(jobResult -> {
     }
 });
 ```
+
+Client applications must provide an implementation of the `BatchProcessor` interface - 
+this should be a class that takes a list of `Job`s and returns a corresponding list of 
+`JobResult`s. The classes `org.batch.mb.MBJob` and `org.batch.mb.MBJobResult` can be 
+used for job input and output, however, any classes that implement the interfaces will
+work. 
+
+The Micro-Batcher is implemented in the `org.batch.mb.MBBatcher` class. When the client
+application submits a Job, it will be returned a CompletableFuture wrapping a JobResult. 
+The CompletableFuture can be used with Java's standard asynchronous programming facilities,
+such as executing code upon completion, chaining actions, waiting for a group of jobs to
+be completed, etc. 
+
+MBBatcher is thread-safe and jobs can be submitted from any thread. 
+
+The shutdown method will block until all previously submitted jobs have been processed,
+it will also prevent the submission of any new jobs. 
 
 ## Building / Development 
 
@@ -80,12 +106,12 @@ had to use a busy-loop to poll the queue, pegging a core at 100% CPU, or introdu
 sleeps with unnecessary delays. With the LinkedBlockingQueue implementation,
 performance tests on a Ryzen 7 7840HS show 10 threads can achieve approx 40-50 million
 job submissions per second per thread. Overall throughput is a little under 1 million
-jobs per second because the batch processing happens in a single thread. 
+jobs per second because the batch processing happens in a single thread - a future 
+extension would look at multi-threaded batch processing - but that would put some 
+requirements on the clients implementing BatchProcessor. 
 
 Once a job has been submitted, the caller needs to know when it has been processed
 and results are available. The JobResult returned by the BatchProcessor is wrapped
 in a CompletableFuture, an asynchronous feature introduced in Java 8 that allows 
 composing, combining, and executing asynchronous computations. 
-
-### Components 
 

@@ -3,6 +3,7 @@ plugins {
     id 'jacoco'
 }
 
+
 group = 'org.batch'
 version = '1.0-SNAPSHOT'
 
