@@ -14,12 +14,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class MicroBatcherTest {
 
-    // TODO: Errored jobs
-    // TODO: Exceptions thrown by BatchProcessor
-    // TODO: Logging, Metrics?
-    // TODO: Queue max capacity, time outs
-    // TODO: Test with empty timeout
-
     private static final int BATCH_SIZE = 5;
     private static final int TIMEOUT_MS = 10;
 

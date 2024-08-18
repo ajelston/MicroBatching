@@ -2,7 +2,6 @@ package org.batch.mb;
 
 import org.batch.*;
 
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
@@ -83,11 +82,7 @@ public class MBBatcher<TInput, TOutput> implements MicroBatcher<TInput, TOutput>
     }
 
     private MBPendingJob<TInput, TOutput> getPendingJob() throws InterruptedException {
-        if (options.timeout().isEmpty()) {
-            return pending.take();
-        }
-        Duration timeout = options.timeout().get();
-        return pending.poll(timeout.toMillis(), TimeUnit.MILLISECONDS);
+        return pending.poll(options.timeout().toMillis(), TimeUnit.MILLISECONDS);
     }
 
     @Override

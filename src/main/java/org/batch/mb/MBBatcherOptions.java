@@ -3,13 +3,13 @@ package org.batch.mb;
 import org.batch.MicroBatcherOptions;
 
 import java.time.Duration;
-import java.util.Optional;
 
 public class MBBatcherOptions implements MicroBatcherOptions {
     private static final int DEFAULT_BATCH_SIZE = 5;
+    private static final Duration DEFAULT_TIMEOUT = Duration.ofSeconds(10);
 
     private final int batchSize;
-    private final Optional<Duration> timeout;
+    private final Duration timeout;
 
     public MBBatcherOptions(Builder builder) {
         this.batchSize = builder.getBatchSize();
@@ -22,24 +22,24 @@ public class MBBatcherOptions implements MicroBatcherOptions {
     }
 
     @Override
-    public Optional<Duration> timeout() {
+    public Duration timeout() {
         return timeout;
     }
 
     public static class Builder {
         private int batchSize;
-        private Optional<Duration> timeout;
+        private Duration timeout;
 
         public Builder() {
             batchSize = DEFAULT_BATCH_SIZE;
-            timeout = Optional.empty();
+            timeout = DEFAULT_TIMEOUT;
         }
 
         public int getBatchSize() {
             return batchSize;
         }
 
-        public Optional<Duration> getTimeout() {
+        public Duration getTimeout() {
             return timeout;
         }
 
@@ -49,7 +49,7 @@ public class MBBatcherOptions implements MicroBatcherOptions {
         }
 
         public Builder withTimeout(Duration duration) {
-            this.timeout = Optional.of(duration);
+            this.timeout = duration;
             return this;
         }
 
